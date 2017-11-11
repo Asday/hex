@@ -79,7 +79,7 @@ class Hex(object):
         self.q = results['x']['rounded']
         self.r = results['z']['rounded']
 
-    def line(self, to, remove_duplicates=False):
+    def line(self, to):
         samples = int(self.distance(to)) + 1
 
         return lazy_set_generator(
