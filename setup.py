@@ -82,7 +82,7 @@ setup(
     author=AUTHOR,
     author_email=EMAIL,
     url=URL,
-    py_modules=['hexarray'],
+    packages=['hexarray', 'hexarray.models'],
     install_requires=REQUIRED,
     include_package_data=True,
     license='MIT',
