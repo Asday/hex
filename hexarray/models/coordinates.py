@@ -2,6 +2,10 @@ from ..utils import lazy_set_generator, lerp
 
 
 class Hex(object):
+    _addition_error = NotImplementedError(
+        f'You must provide a Hex subclass for addition.')
+    _multiplication_error = NotImplementedError(
+        f'This Hex can only be multiplied by a scalar.')
 
     def __init__(self, q, r):
         self.q = q
@@ -30,6 +34,34 @@ class Hex(object):
 
     def __hash__(self):
         return hash((self.q, self.r))
+
+    def __add__(self, other):
+        try:
+            return self.__class__(self.q + other.q, self.r + other.r)
+        except AttributeError:
+            raise self._addition_error
+
+    def __iadd__(self, other):
+        try:
+            self.q, self.r = self.q + other.q, self.r + other.r
+        except AttributeError:
+            raise self._addition_error
+
+        return self
+
+    def __mul__(self, other):
+        try:
+            return self.__class__(self.q * other, self.r * other)
+        except TypeError:
+            raise self._multiplication_error
+
+    def __imul__(self, other):
+        try:
+            self.q, self.r = self.q * other, self.r * other
+        except TypeError:
+            raise self._multiplication_error
+
+        return self
 
     @classmethod
     def from_cube(cls, x, y, z):
