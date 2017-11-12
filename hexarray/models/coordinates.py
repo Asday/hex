@@ -1,3 +1,5 @@
+import random
+
 from ..utils import lazy_set_generator, lerp
 
 
@@ -111,7 +113,13 @@ class Hex(object):
         self.q = results['x']['rounded']
         self.r = results['z']['rounded']
 
-    def line(self, to):
+    def line(self, to, epsilon_type=None):
+        epsilon = EPSILON_TYPES[epsilon_type]
+        if callable(epsilon):
+            epsilon = epsilon()
+
+        to += epsilon
+
         samples = int(self.distance(to)) + 1
 
         return lazy_set_generator(
@@ -136,4 +144,13 @@ DIAGONALS = {
     'dl': Hex(-2, +1),
     'dr': Hex(+1, +1),
     'cd': Hex(-1, +2),
+}
+
+
+EPSILON_TYPES = {
+    None: Hex(0, 0),
+    'up': DIAGONALS['cu'] * 1e-6,
+    'down': DIAGONALS['cd'] * 1e-6,
+    'random': lambda: random.choice(
+        (EPSILON_TYPES['up'], EPSILON_TYPES['down'])),
 }
