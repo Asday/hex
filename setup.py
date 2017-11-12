@@ -18,8 +18,6 @@ URL = 'https://github.com/asday/hex'
 EMAIL = 'sara.and.zuka@gmail.com'
 AUTHOR = 'Adam Barnes'
 
-REQUIRED = []
-
 # The rest you shouldn't have to touch too much :)
 # ------------------------------------------------
 # Except, perhaps the License and Trove Classifiers!
@@ -38,6 +36,9 @@ with io.open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
 about = {}
 with open(os.path.join(here, NAME, '__version__.py')) as f:
     exec(f.read(), about)
+
+with open(os.path.join(here, 'requirements.txt')) as f:
+    REQUIRED = f.readlines()
 
 
 class UploadCommand(Command):
