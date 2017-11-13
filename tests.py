@@ -35,5 +35,11 @@ class HexarrayModelsContainersLayer(unittest.TestCase):
 
         self.assertEqual(test_dict[layer_2], value)
 
+    def test_layer_matches_kwargs(self):
+        layer = Layer()
+
+        self.assertEqual(layer.matches_kwargs(layer=0), True)
+        self.assertEqual(layer.matches_kwargs(layer__lt=1), True)
+
 
 unittest.main()
