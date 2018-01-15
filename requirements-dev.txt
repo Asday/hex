@@ -1,2 +1,3 @@
 flake8
 watchdog
+-r requirements.txt
