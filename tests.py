@@ -2,6 +2,7 @@
 
 import unittest
 
+from hexarray import version
 from hexarray.models.containers import Layer
 from hexarray.models.coordinates import Hex
 
@@ -40,6 +41,18 @@ class HexarrayModelsContainersLayer(unittest.TestCase):
 
         self.assertEqual(layer.matches_kwargs(layer=0), True)
         self.assertEqual(layer.matches_kwargs(layer__lt=1), True)
+
+
+class HexarrayVersion(unittest.TestCase):
+
+    def setUp(self):
+        self.version = version()
+
+    def test_version_returns_tuple(self):
+        self.assertIsInstance(self.version, tuple)
+
+    def test_version_has_release_feature_fix_format(self):
+        self.assertEqual(len(self.version), 3)
 
 
 unittest.main()
