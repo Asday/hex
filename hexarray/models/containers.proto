@@ -14,5 +14,7 @@ message LayerMessage {
 
 message EntityMessage {
   required int64 layer = 1;
-  required int64 entity = 2;
+  required int64 entity_id = 2;
+  optional int64 q = 3 [default=0];
+  optional int64 r = 4 [default=0];
 }
