@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+message MapMessage {
+  repeated LayerMessage layers = 1;
+  repeated EntityMessage entities = 2;
+}
+
+message LayerMessage {
+  optional int64 layer = 1 [default=0];
+  optional bool obstacle_los = 2 [default=false];
+  optional bool obstacle_movement = 3 [default=false];
+  optional string name = 4 [default=""];
+}
+
+message EntityMessage {
+  required int64 layer = 1;
+  required int64 entity = 2;
+}

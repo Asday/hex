@@ -1,0 +1,3 @@
+#!/bin/sh
+
+protoc --proto_path=hexarray/models --python_out=hexarray/models hexarray/models/containers.proto
