@@ -31,10 +31,7 @@ class HexarrayModelsContainersLayer(unittest.TestCase):
     def test_layer_hashes_correctly(self):
         layer_1, layer_2 = Layer(), Layer()
 
-        value = object()
-        test_dict = {layer_1: value}
-
-        self.assertEqual(test_dict[layer_2], value)
+        self.assertEqual(hash(layer_1), hash(layer_2))
 
     def test_layer_matches_kwargs(self):
         layer = Layer()
