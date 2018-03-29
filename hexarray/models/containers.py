@@ -3,8 +3,7 @@ import attr
 
 class Map(object):
     """
-    For storing static things.  Dynamic things should maintain their own
-    position.
+    Collections of entity IDs indexed by `Hex`es, indexed by `Layer`s.
     """
 
     def __init__(self, layers=None):
@@ -17,6 +16,20 @@ class Map(object):
             layer for layer in self._map.keys()
             if layer.matches_kwargs(kwargs)
         )
+
+    def __getitem__(self, index):
+        """
+        `index` must be a `Hex`.
+
+        Will always return a dict of `{Layer: [entity_id, ...]}`, even
+        for indices out of bounds.
+        """
+
+        out = {}
+        for layer, entities in self._map.items():
+            out[layer] = entities.get(index)
+
+        return out
 
 
 @attr.s(frozen=True)
