@@ -1,3 +1,4 @@
+from collections import defaultdict
 import threading
 
 import attr
@@ -18,7 +19,7 @@ class Map(object):
     def __init__(self, layers=None):
         layers = layers or []
 
-        self._map = {layer: {} for layer in layers}
+        self._map = {layer: defaultdict(list) for layer in layers}
         self._entity_pool = {}
         self._next_id = 0
         self._next_id_lock = threading.Lock()
@@ -86,6 +87,35 @@ class Map(object):
                 )
 
         return self._entity_pool.pop(entity_id)
+
+    def move(self, entity_id, layer, from_hex, to_hex):
+        """
+        Moves an `entity_id` from one `Hex` to another, within the same
+        layer.
+        """
+
+        if from_hex is None and to_hex is None:
+            raise ValueError('You must specify at least one location.')
+
+        if from_hex is not None:
+            self._map[layer][from_hex].remove(entity_id)
+
+        if to_hex is not None:
+            self._map[layer][to_hex].append(entity_id)
+
+    def spawn(self, entity_id, layer, at):
+        """
+        Convenience function.  Simply calls `self.move()`.
+        """
+
+        return self.move(entity_id, layer, None, at)
+
+    def despawn(self, entity_id, layer, at):
+        """
+        Convenience function.  Simply calls `self.move()`.
+        """
+
+        return self.move(entity_id, layer, at, None)
 
     def get_layers_by_kwargs(self, **kwargs):
         return (

@@ -32,14 +32,22 @@ class HexarrayModelsContainersMap(unittest.TestCase):
     def test_all_active_entities_returns_correct_ids(self):
         layer_1, layer_2 = Layer(layer=1), Layer(layer=2)
         map_ = Map([layer_1, layer_2])
+        entity_1, entity_2, entity_3 = object(), object(), object()
+        entity_1_id = map_.register_entity(entity_1)
+        entity_2_id = map_.register_entity(entity_2)
+        entity_3_id = map_.register_entity(entity_3)
 
-        # TODO:  Use an entity registration system instead.
-        map_._map[layer_1][Hex(0, 1)] = [2, 4, 8]
-        map_._map[layer_2][Hex(16, 32)] = [64, 128, 2]
+        map_.spawn(entity_1_id, layer_1, Hex(0, 1))
+        map_.spawn(entity_2_id, layer_1, Hex(0, 1))
+        map_.spawn(entity_2_id, layer_2, Hex(0, 1))
+        map_.spawn(entity_3_id, layer_2, Hex(0, 1))
 
         entity_ids = sorted(list(map_.all_active_entities))
 
-        self.assertEqual(entity_ids, [2, 4, 8, 64, 128])
+        self.assertEqual(
+            entity_ids,
+            sorted([entity_1_id, entity_2_id, entity_3_id]),
+        )
 
     def test_register_entity_reraises_correctly(self):
         map_ = Map()
@@ -63,8 +71,8 @@ class HexarrayModelsContainersMap(unittest.TestCase):
         entity_1_id = map_.register_entity(entity_1)
         entity_2_id = map_.register_entity(entity_2)
 
-        # TODO:  Switch to using entity registration system properly.
-        map_._map[layer][Hex(0, 1)] = [entity_1_id, entity_2_id]
+        map_.spawn(entity_1_id, layer, Hex(0, 1))
+        map_.spawn(entity_2_id, layer, Hex(0, 1))
 
         with self.assertRaises(EntityInUseError):
             map_.deregister_entity(entity_1_id)
@@ -90,15 +98,19 @@ class HexarrayModelsContainersMap(unittest.TestCase):
 
     def test_getitem_returns_correct_entity_ids(self):
         layer = Layer()
-        index = Hex(0, 0)
-        entity_ids = [0, 1, 2]
-
         map_ = Map([layer])
+        index = Hex(0, 0)
+        entity_1, entity_2 = object(), object()
+        entity_1_id = map_.register_entity(entity_1)
+        entity_2_id = map_.register_entity(entity_2)
 
-        # TODO:  Use an entity registration system instead.
-        map_._map[layer][index] = entity_ids
+        map_.spawn(entity_1_id, layer, index)
+        map_.spawn(entity_2_id, layer, index)
 
-        self.assertEqual(map_[index][layer], entity_ids)
+        self.assertEqual(
+            sorted(map_[index][layer]),
+            sorted([entity_1_id, entity_2_id]),
+        )
 
 
 class HexarrayModelsContainersLayer(unittest.TestCase):
