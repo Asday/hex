@@ -5,6 +5,7 @@ import unittest
 from hexarray import version
 from hexarray.models.containers import Layer, Map
 from hexarray.models.coordinates import Hex
+from hexarray.models.exceptions import EntityInUseError
 
 
 class HexarrayModelsCoordinatesHex(unittest.TestCase):
@@ -27,6 +28,54 @@ class HexarrayModelsCoordinatesHex(unittest.TestCase):
 
 
 class HexarrayModelsContainersMap(unittest.TestCase):
+
+    def test_all_active_entities_returns_correct_ids(self):
+        layer_1, layer_2 = Layer(layer=1), Layer(layer=2)
+        map_ = Map([layer_1, layer_2])
+
+        # TODO:  Use an entity registration system instead.
+        map_._map[layer_1][Hex(0, 1)] = [2, 4, 8]
+        map_._map[layer_2][Hex(16, 32)] = [64, 128, 2]
+
+        entity_ids = sorted(list(map_.all_active_entities))
+
+        self.assertEqual(entity_ids, [2, 4, 8, 64, 128])
+
+    def test_register_entity_reraises_correctly(self):
+        map_ = Map()
+
+        with self.assertRaises(AttributeError):
+            map_.register_entity(int(), fail_silently=False)
+
+        try:
+            map_.register_entity(int())
+        except Exception as e:
+            self.fail(
+                f'`Map().register_entity()` incorrectly raised an'
+                f' exception:  {e}'
+            )
+
+    def test_deregister_entity_validates_correctly(self):
+        layer = Layer()
+        map_ = Map([layer])
+        entity_1, entity_2 = object(), object()
+
+        entity_1_id = map_.register_entity(entity_1)
+        entity_2_id = map_.register_entity(entity_2)
+
+        # TODO:  Switch to using entity registration system properly.
+        map_._map[layer][Hex(0, 1)] = [entity_1_id, entity_2_id]
+
+        with self.assertRaises(EntityInUseError):
+            map_.deregister_entity(entity_1_id)
+
+        try:
+            map_.deregister_entity(entity_1_id, validate=False)
+        except Exception as e:
+            self.fail(
+                f'`Map().deregister_entity()` incorrectly raised an'
+                f' exception:  {e}'
+            )
 
     def test_getitem_returns_correct_layers(self):
         layer_1, layer_2 = Layer(layer=1), Layer(layer=2)
