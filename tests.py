@@ -85,6 +85,28 @@ class HexarrayModelsContainersMap(unittest.TestCase):
                 f' exception:  {e}'
             )
 
+    def test_move(self):
+        layer = Layer()
+        map_ = Map([layer])
+        entity = object()
+
+        entity_id = map_.register_entity(entity)
+
+        map_.spawn(entity_id, layer, Hex(0, 1))
+
+        self.assertEqual(map_[Hex(0, 1)][layer], [entity_id])
+
+        map_.move(entity_id, layer, Hex(0, 1), Hex(2, 4))
+
+        self.assertEqual(map_[Hex(0, 1)][layer], [])
+        self.assertEqual(map_[Hex(2, 4)][layer], [entity_id])
+
+    def test_move_raises_correctly(self):
+        map_ = Map()
+
+        with self.assertRaises(ValueError):
+            map_.move(0, Layer(), None, None)
+
     def test_getitem_returns_correct_layers(self):
         layer_1, layer_2 = Layer(layer=1), Layer(layer=2)
         index = Hex(0, 0)
