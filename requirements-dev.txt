@@ -1,3 +1,5 @@
 flake8
 watchdog
+tox
+detox
 -r requirements.txt

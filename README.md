@@ -13,4 +13,4 @@ pip install -r requirements-dev.txt
 
 # Running tests
 
-`./tests.py`.  Simple.
+`detox`.  Simple.

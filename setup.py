@@ -1,103 +1,47 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
-# Note: To use the 'upload' functionality of this file, you must:
-#   $ pip install twine
-
+from glob import glob
 import io
-import os
-import sys
-from shutil import rmtree
-
-from setuptools import Command, setup
-
-# Package meta-data.
-NAME = 'hexarray'
-DESCRIPTION = 'Hex grid implementation a la RedBlob.'
-URL = 'https://github.com/asday/hex'
-EMAIL = 'sara.and.zuka@gmail.com'
-AUTHOR = 'Adam Barnes'
-
-# The rest you shouldn't have to touch too much :)
-# ------------------------------------------------
-# Except, perhaps the License and Trove Classifiers!
-# If you do change the License, remember to change the Trove Classifier for
-# that!
-
-here = os.path.abspath(os.path.dirname(__file__))
-
-# Import the README and use it as the long-description.
-# Note: this will only work if 'README.rst' is present in your MANIFEST.in
-# file!
-with io.open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
-    long_description = '\n' + f.read()
-
-# Load the package's __version__.py module as a dictionary.
-about = {}
-with open(os.path.join(here, NAME, '__version__.py')) as f:
-    exec(f.read(), about)
-
-with open(os.path.join(here, 'requirements.txt')) as f:
-    REQUIRED = f.readlines()
+from os.path import basename, dirname, join, splitext
+import re
+from setuptools import find_packages, setup
 
 
-class UploadCommand(Command):
-    """Support setup.py upload."""
-
-    description = 'Build and publish the package.'
-    user_options = []
-
-    @staticmethod
-    def status(s):
-        """Prints things in bold."""
-        print('\033[1m{0}\033[0m'.format(s))
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        try:
-            self.status('Removing previous builds…')
-            rmtree(os.path.join(here, 'dist'))
-        except OSError:
-            pass
-
-        self.status('Building Source and Wheel (universal) distribution…')
-        os.system(f'{sys.executable} setup.py sdist bdist_wheel --universal')
-
-        self.status('Uploading the package to PyPi via Twine…')
-        os.system('twine upload dist/*')
-
-        sys.exit()
+def read(*names, **kwargs):
+    return io.open(
+        join(dirname(__file__), *names),
+        encoding=kwargs.get('encoding', 'utf8')
+    ).read()
 
 
-# Where the magic happens:
 setup(
-    name=NAME,
-    version=about['__version__'],
-    description=DESCRIPTION,
-    long_description=long_description,
-    author=AUTHOR,
-    author_email=EMAIL,
-    url=URL,
-    packages=['hexarray', 'hexarray.models'],
-    install_requires=REQUIRED,
-    include_package_data=True,
+    name='hexarray',
+    version='0.3.0',
     license='MIT',
+    description='Hex grid implementation a la RedBlob.',
+    long_description='',
+    author='Adam Barnes',
+    author_email='sara.and.zuka@gmail.com',
+    url='https://github.com/asday/hex',
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
+    py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
+    include_package_data=True,
+    zip_safe=False,
     classifiers=[
-        # Trove classifiers
-        # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
+        # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
+        'Development Status :: 1 - Planning',
+        'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
+        'Operating System :: Unix',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: Implementation :: CPython',
+        'Topic :: Utilities',
     ],
-    # $ setup.py publish support.
-    cmdclass={
-        'upload': UploadCommand,
-    },
+    install_requires=[
+        'attrs>=17,<18',
+        'protobuf>=3.5,<4',
+    ],
 )
